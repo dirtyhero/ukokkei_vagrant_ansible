@@ -1,4 +1,4 @@
-# ukokkei_vagrant_ansible
+ukokkei_vagrant_ansible_local
 
 # Description
 set up VM to run ukokkei with Vagrant, Ansible
@@ -35,24 +35,36 @@ drwxr-xr-x 20 kohei staff 680  5 23 18:00 ukokkei_frontend
 
 ``` shell
 cd ~/
-git clone 
+git clone git@github.com:Kohei909Otsuka/ukokkei_vagrant_ansible.git
 ```
 
-## step 2 put some symbolic links
+## step 2 copy
 
 ``` shell
-cd ~/development/github/ukokkei #your one
+cd ~/ukokkei_vagrant_ansible
+
+cp  Vagrantfile /Users/kohei/development/github/ukokkei/Vagrantfile
+cp  ansible.cfg /Users/kohei/development/github/ukokkei/ansible.cfg
+cp  install-ansible.sh /Users/kohei/development/github/ukokkei/install-ansible.sh
+cp  inventory /Users/kohei/development/github/ukokkei/inventory
+cp -R provisioning /Users/kohei/development/github/ukokkei/provisioning
 ```
 
-## step 3 vagrant up and vagrant provision
+## step 3 vagrant up(auto provisioning)
 
 this takes time for a while
 
 ``` shell
 cd ~/development/github/ukokkei
 vagrant up
+```
+
+if you want provison again
+
+```
 vagrant provision
 ```
+
 ## step 4 rails s
 
 ```
@@ -101,8 +113,8 @@ then please allow more memory on your VM like below on VagrantFile
 
 # Ref
 
-[ansible](http://docs.ansible.com)
-[vagrant](https://www.vagrantup.com/docs/provisioning/ansible_local.html)
-[vagrant ansibel_local(with ansible v 2) error](http://qiita.com/dz_/items/e696627e792dc54b8c21)
-[rails error](https://solidfoundationwebdev.com/blog/posts/cannot-render-console-from-some-ip-with-rails)
-[PostgresSQL 9.5.x on ubuntu](https://www.howtoforge.com/tutorial/how-to-install-postgresql-95-on-ubuntu-12_04-15_10/)
+- [ansible](http://docs.ansible.com)
+- [vagrant](https://www.vagrantup.com/docs/provisioning/ansible_local.html)
+- [vagrant ansibel_local(with ansible v 2) error](http://qiita.com/dz_/items/e696627e792dc54b8c21)
+- [rails error](https://solidfoundationwebdev.com/blog/posts/cannot-render-console-from-some-ip-with-rails)
+- [PostgresSQL 9.5.x on ubuntu](https://www.howtoforge.com/tutorial/how-to-install-postgresql-95-on-ubuntu-12_04-15_10/)
