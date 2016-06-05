@@ -1,0 +1,35 @@
+- name: Check if rails 4.2.6 is installed
+  shell: rails -v | grep {{ rails_version }} chdir={{ukokkei_dummy_path}}
+  register: rails_check_install
+  changed_when: false
+  ignore_errors: yes
+
+- name: Install rails
+  command: gem install rails -v {{rails_version}} chdir={{ukokkei_dummy_path}}
+  when: rails_check_install|failed
+
+- name: bundle install
+  command: bundle install chdir={{item}}
+  with_items:
+    - "{{ukokkei_core_path}}"
+    - "{{ukokkei_backend_path}}"
+    - "{{ukokkei_dummy_path}}"
+    # - "{{ukokkei_frontend_path}}"
+
+- name: Copy database.yml
+  copy: src=database_tmp.yml dest={{item}}
+  with_items:
+    - "{{ukokkei_dummy_path}}/config/database.yml"
+    - "{{ukokkei_core_path}}/config/database.yml"
+    - "{{ukokkei_core_path}}/spec/dummy/config/database.yml"
+
+
+- name: rake db:create
+  command: rake db:create chdir={{ukokkei_core_path}}
+  ignore_errors: yes
+
+- name: rake db:migrates
+  command: rake db:migrate chdir={{ukokkei_core_path}}
+
+- name: rake ukokkei_core:import_dummy_data
+  command: rake ukokkei_core:import_dummy_data chdir={{ukokkei_dummy_path}}

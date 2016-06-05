@@ -1,0 +1,13 @@
+---
+- name: Install Ruby, Rails, PostgresSQL, MySQL, ElasticSearch
+  hosts: core
+  remote_user: root
+  # remote_user: user
+  # sudo: yes
+
+  roles:
+    - common
+    - ruby
+    - db
+    - elastic_search
+    - rails

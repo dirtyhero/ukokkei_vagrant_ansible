@@ -1,0 +1,10 @@
+#rbenv
+#ruby
+ruby_version: 2.3.0
+rails_version: 4.2.6
+gemset_name: ukokkei
+db_user: vagrant
+ukokkei_core_path: /vagrant/ukokkei_core
+ukokkei_dummy_path: /vagrant/ukokkei_dummy
+ukokkei_backend_path: /vagrant/ukokkei_backend
+ukokkei_frontend_path: /vagrant/ukokkei_frontend

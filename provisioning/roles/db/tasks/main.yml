@@ -1,0 +1,64 @@
+---
+# PostgresSQL
+
+- name: check if PostgresSQL 9.5.x is installed
+  become: yes
+  shell: psql --version | grep 9.5
+  register: psql_check_install
+  changed_when: false
+  ignore_errors: yes
+
+- name: Get Ready for PostgresSQL 9.5.x on Ubuntu
+  become: yes
+  shell: sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+  when: psql_check_install|failed
+
+- name: Get Ready for PostgresSQL 9.5.x on Ubuntu
+  become: yes
+  shell: wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+  when: psql_check_install|failed
+
+- name: update apt
+  become: yes
+  apt: update_cache=yes
+
+- name: Install PostgresSQL
+  become: yes
+  apt: name={{ item }} state=latest
+  with_items:
+   - postgresql
+   - postgresql-contrib
+   - libpq-dev
+   - build-essential
+
+- name: Set postgresql service to start on boot
+  become: yes
+  service: name=postgresql state=started enabled=true
+
+- name: Check if vagrant role exists
+  become: yes
+  become_user: postgres
+  shell: psql -c "select usename from pg_user;" | grep {{db_user}}
+  register: psql_role_check
+  changed_when: false
+  ignore_errors: yes
+
+- name: create role vagrant
+  become: yes
+  become_user: postgres
+  ignore_errors: yes
+  shell: psql -c "CREATE USER {{db_user}} WITH SUPERUSER PASSWORD '{{db_user}}';"
+  when: psql_role_check|failed
+
+
+# MySQL
+- name: Install MySQL
+  become: yes
+  apt: name={{ item }} state=latest
+  with_items:
+   - mysql-server
+   - libmysqld-dev
+
+- name: Set mysql service to start on boot
+  become: yes
+  service: name=mysql state=started enabled=true

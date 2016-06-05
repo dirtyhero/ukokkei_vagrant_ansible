@@ -1,0 +1,62 @@
+---
+- name: Install dependency
+  apt: name={{ item }} state=installed
+  become: yes
+  with_items:
+   - libssl-dev
+   - libreadline-dev
+   - zlib1g-dev
+   - nodejs
+
+- name: Install rbenv
+  git: repo=https://github.com/sstephenson/rbenv.git dest=/home/vagrant/.rbenv/
+
+- name: Install ruby-build
+  git: repo=https://github.com/sstephenson/ruby-build.git dest=/home/vagrant/.rbenv/plugins/ruby-build/
+
+- name: Set rbenv config
+  copy: src=bashrc dest=~/.bashrc
+
+- name: Check if ruby 2.3.0 is installed
+  shell: "rbenv versions | grep {{ ruby_version }}"
+  register: rbenv_check_install
+  changed_when: false
+  ignore_errors: yes
+
+- name: Install ruby
+  shell: rbenv install {{ ruby_version }}
+  when: rbenv_check_install|failed
+
+- name: Use ruby 2.3.0 global
+  shell: rbenv global {{ ruby_version }}
+  when: rbenv_check_install|failed
+
+- name: Install rbenv-gemset
+  git: repo=https://github.com/jf/rbenv-gemset.git dest=/home/vagrant/.rbenv/plugins/rbenv-gemset
+
+- name: Check if version is installed ruby
+  shell: rbenv gemset list | grep ukokkei
+  register: check_gemset
+  changed_when: False
+  ignore_errors: yes
+
+- name: create gemset
+  shell: rbenv gemset create {{ ruby_version }} {{ gemset_name }}
+  when: check_gemset|failed
+
+- stat: path=/vagrant/.rbenv-gemsets
+  register: is_file
+
+- name: put file to active gemset
+  shell: echo > /vagrant/.rbenv-gemsets {{ gemset_name }}
+  when: is_file.stat.md5 is not defined
+
+- name: Check if bundler is installed
+  shell: "gem which bundler"
+  register: bundler_check_install
+  changed_when: False
+  ignore_errors: yes
+
+- name: gem install for global
+  shell: gem install bundler
+  when: bundler_check_install|failed
