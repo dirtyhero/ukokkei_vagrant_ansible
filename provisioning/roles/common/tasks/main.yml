@@ -1,5 +1,10 @@
 ---
 
+- name: update apt-get
+  become: yes
+  shell: apt-get update
+
 - name: Install git 
   become: true
   apt: name=git state=latest
+
